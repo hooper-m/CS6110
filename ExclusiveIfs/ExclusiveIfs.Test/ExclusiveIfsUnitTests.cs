@@ -11,62 +11,60 @@ namespace ExclusiveIfs.Test
     [TestClass]
     public class UnitTest : CodeFixVerifier
     {
+        private const string singleIf = @"
+using System;
+namespace Test {
+    class Program {
+        public static int test(bool b) {
+            if (b) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+    }
+}";
 
+        private const string twoIfsSecondShouldBeIfElse = @"
+namespace Test {
+    class Program {
+        public static int test(int x) {
+            if (x > 1) return 1;
+            if (x <= 1) return 0;
+            return -1;
+        }
+    }
+}";
         //No diagnostics expected to show up
-        [TestMethod]
-        public void TestMethod1()
+        [DataTestMethod]
+        [DataRow(""),
+         DataRow(singleIf),]
+        public void NoDiagnostic(string testCode)
         {
-            var test = @"";
-
-            VerifyCSharpDiagnostic(test);
+            VerifyCSharpDiagnostic(testCode);
         }
 
-        //Diagnostic and CodeFix both triggered and checked for
-        [TestMethod]
-        public void TestMethod2()
+        //Diagnostic triggered and checked for
+        [DataTestMethod]
+        [DataRow(twoIfsSecondShouldBeIfElse, 6, 13),]
+        public void DiagnosticRaised(string testCode, int line, int column)
         {
-            var test = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
-    {
-        class TypeName
-        {   
-        }
-    }";
             var expected = new DiagnosticResult
             {
-                Id = "ExclusiveIfs",
-                Message = String.Format("Type name '{0}' contains lowercase letters", "TypeName"),
+                Id = ExclusiveIfsAnalyzer.DiagnosticId,
+                Message = new LocalizableResourceString(
+                    nameof(Resources.AnalyzerMessageFormat),
+                    Resources.ResourceManager,
+                    typeof(Resources))
+                    .ToString(),
                 Severity = DiagnosticSeverity.Warning,
-                Locations =
-                    new[] {
-                            new DiagnosticResultLocation("Test0.cs", 11, 15)
-                        }
+                Locations = new[]
+                {
+                    new DiagnosticResultLocation("Test0.cs", line, column)
+                }
             };
 
-            VerifyCSharpDiagnostic(test, expected);
-
-            var fixtest = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
-    {
-        class TYPENAME
-        {   
-        }
-    }";
-            VerifyCSharpFix(test, fixtest);
+            VerifyCSharpDiagnostic(testCode, expected);
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
