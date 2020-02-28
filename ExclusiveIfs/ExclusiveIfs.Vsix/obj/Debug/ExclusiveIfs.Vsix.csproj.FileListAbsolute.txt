@@ -1,0 +1,17 @@
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\bin\Debug\tools\install.ps1
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\bin\Debug\tools\uninstall.ps1
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\bin\Debug\ExclusiveIfs.vsix
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\bin\Debug\extension.vsixmanifest
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\bin\Debug\ExclusiveIfs.dll
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\bin\Debug\System.Collections.Immutable.dll
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\bin\Debug\ExclusiveIfs.pdb
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\obj\Debug\ExclusiveIfs.Vsix.csprojAssemblyReference.cache
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\obj\Debug\_EmptyResource.resources
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\obj\Debug\ExclusiveIfs.Vsix.csproj.GenerateResource.cache
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\obj\Debug\ExclusiveIfs.Vsix.csproj.CoreCompileInputs.cache
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\obj\Debug\ExclusiveIfs.Vsix.csproj.CopyComplete
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\obj\Debug\ExclusiveIfs.dll
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\obj\Debug\ExclusiveIfs.pdb
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\obj\Debug\extension.vsixmanifest
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\obj\Debug\files.json
+C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\obj\Debug\createTemplateManifests.cache
