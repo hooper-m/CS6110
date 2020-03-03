@@ -28,19 +28,23 @@ namespace ExclusiveIfs
 
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
-            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
             context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.IfStatement);
         }
 
-        private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
-        {
-            var IfStatement = (IfStatementSyntax) context.Node;
+        private static void AnalyzeNode(SyntaxNodeAnalysisContext context) {
+            var ifStatement = (IfStatementSyntax) context.Node;
 
             // If next node is not an if statement, return
+            var outerStatements = ifStatement.Parent.ChildNodes().ToImmutableArray();
+            int nextStatementIndex = outerStatements.IndexOf(ifStatement) + 1;
 
-            // extract condition statement from each if statement
-            // check sat
+            if (nextStatementIndex >= outerStatements.Length || !(outerStatements[nextStatementIndex] is IfStatementSyntax))
+                return;
+
+            IfStatementSyntax nextIfStatement = (IfStatementSyntax) outerStatements[nextStatementIndex];
+
+            // TODO: if (ifStatment.condition && nextIfStatement.condition ==> UNSAT) {
+            //context.ReportDiagnostic(Diagnostic.Create(Rule, nextIfStatement.GetLocation()));
         }
     }
 }
