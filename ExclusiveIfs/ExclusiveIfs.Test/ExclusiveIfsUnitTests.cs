@@ -78,7 +78,17 @@ namespace Test {
         }
     }
 }";
-
+        private const string trivialUnsatIfs = @"
+namespace Test {
+    class Program {
+        public static int test(bool b) {
+            int x = 0;
+            if (b)  x = 1;
+            if (!b) x = 2;
+            return x;
+        }
+    }
+}";
         private const string exclusiveIfsInBlock = @"
 namespace Test {
     class Program {
@@ -139,7 +149,9 @@ namespace Test {
         //Diagnostic triggered and checked for
         [DataTestMethod]
         [DataRow(exclusiveIfsInBlock, 6, 13),
-         DataRow(exclusiveIfsInSwitchCase, 9, 17),]
+         DataRow(exclusiveIfsInSwitchCase, 9, 17),
+         DataRow(trivialUnsatIfs, 7, 13),
+         ]
         public void DiagnosticRaised(string testCode, int line, int column)
         {
             VerifyCSharpDiagnostic(testCode, Result(line, column));
