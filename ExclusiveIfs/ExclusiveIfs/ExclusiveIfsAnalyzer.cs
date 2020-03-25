@@ -29,8 +29,8 @@ namespace ExclusiveIfs {
             context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.IfStatement);
         }
 
-        private static void AnalyzeNode(SyntaxNodeAnalysisContext context) {
-            var ifStatement = (IfStatementSyntax) context.Node;
+        private static void AnalyzeNode(SyntaxNodeAnalysisContext analysis) {
+            var ifStatement = (IfStatementSyntax) analysis.Node;
 
             // If next node is not an if statement, return
             var outerStatements = ifStatement.Parent.ChildNodes().ToImmutableArray();
@@ -43,22 +43,44 @@ namespace ExclusiveIfs {
 
             IfStatementSyntax nextIfStatement = (IfStatementSyntax) outerStatements[nextStatementIndex];
 
-            using (Context SMTContext = new Context()) {
+            using (Context smt = new Context()) {
 
-                BoolExpr ifCondition1 = SyntaxToZ3(context, SMTContext, ifStatement.Condition);
-                BoolExpr ifCondition2 = SyntaxToZ3(context, SMTContext, nextIfStatement.Condition);
+                var solver = smt.MkSolver();
+                SMTConversionVisitor visitor = new SMTConversionVisitor(smt, analysis);
 
-                var solver = SMTContext.MkSolver();
-                solver.Assert(SMTContext.MkAnd(ifCondition1, ifCondition2));
+                BoolExpr ifCondition1 = (BoolExpr)visitor.Visit(ifStatement.Condition);
+                BoolExpr ifCondition2 = (BoolExpr)visitor.Visit(nextIfStatement.Condition);
+
+                solver.Assert(smt.MkAnd(ifCondition1, ifCondition2));
                 if (solver.Check() == Status.UNSATISFIABLE) {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule, nextIfStatement.GetLocation()));
+                    analysis.ReportDiagnostic(Diagnostic.Create(Rule, nextIfStatement.Condition.GetLocation()));
                 }
+                //SMTConversionWalker walker = new SMTConversionWalker(SMTContext, context, ifStatement.Condition);
+
+                //BoolExpr ifCondition1 = SyntaxToZ3(context, SMTContext, ifStatement.Condition);
+                //BoolExpr ifCondition2 = SyntaxToZ3(context, SMTContext, nextIfStatement.Condition);
+
+                //var solver = SMTContext.MkSolver();
+                //solver.Assert(SMTContext.MkAnd(ifCondition1, ifCondition2));
+                //if (solver.Check() == Status.UNSATISFIABLE) {
+                //    context.ReportDiagnostic(Diagnostic.Create(Rule, nextIfStatement.GetLocation()));
+                //}
             }
         }
 
         private static BoolExpr SyntaxToZ3(SyntaxNodeAnalysisContext analysisContext, Context SMTContext, SyntaxNode condition) {
 
-            if (condition is IdentifierNameSyntax id) {
+            if (condition is LiteralExpressionSyntax literal) {
+                switch (literal.Kind()) {
+                case SyntaxKind.TrueLiteralExpression:
+                    return SMTContext.MkTrue();
+                case SyntaxKind.FalseLiteralExpression:
+                    return SMTContext.MkFalse();
+                }
+            }
+            // bool b = true;
+            // if (b) ...
+            else if (condition is IdentifierNameSyntax id) {
                 var idType = analysisContext.SemanticModel.GetTypeInfo(condition).Type;
                 if (idType.Name == "Boolean") {
                     return SMTContext.MkBoolConst(id.Identifier.ValueText);
@@ -67,6 +89,7 @@ namespace ExclusiveIfs {
             }
 
             else if (condition is PrefixUnaryExpressionSyntax pref) {
+                // !b
                 if (pref.OperatorToken.Kind() == SyntaxKind.ExclamationToken) {
                     return SMTContext.MkNot(SyntaxToZ3(analysisContext, SMTContext, pref.Operand));
                 }
@@ -83,7 +106,14 @@ namespace ExclusiveIfs {
                 case SyntaxKind.EqualsEqualsToken:
                     return SMTContext.MkEq(SyntaxToZ3(analysisContext, SMTContext, bin.Left),
                                            SyntaxToZ3(analysisContext, SMTContext, bin.Right));
+                case SyntaxKind.ExclamationEqualsToken:
+                    // SMTContext.MkDistinct()?
+                    return SMTContext.MkNot(SMTContext.MkEq(SyntaxToZ3(analysisContext, SMTContext, bin.Left),
+                                                            SyntaxToZ3(analysisContext, SMTContext, bin.Right)));
                 // doesn't work, since MkGt needs ArithExp
+
+                // (5 + 5) < 6
+                // 1 + 2 + 3
                 //case SyntaxKind.GreaterThanToken:
                 //    return SMTContext.MkGt(SyntaxToZ3(analysisContext, SMTContext, bin.Left),
                 //                           SyntaxToZ3(analysisContext, SMTContext, bin.Right));

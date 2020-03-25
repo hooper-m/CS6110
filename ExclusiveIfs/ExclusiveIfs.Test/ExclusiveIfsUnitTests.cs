@@ -150,7 +150,7 @@ namespace Test {
         [DataTestMethod]
         [DataRow(exclusiveIfsInBlock, 6, 13),
          DataRow(exclusiveIfsInSwitchCase, 9, 17),
-         DataRow(trivialUnsatIfs, 7, 13),
+         DataRow(trivialUnsatIfs, 7, 17),
          ]
         public void DiagnosticRaised(string testCode, int line, int column)
         {
