@@ -10,21 +10,114 @@ using Microsoft.Z3;
 namespace ExclusiveIfs {
     class SMTConversionVisitor : CSharpSyntaxVisitor<Expr> {
 
-        Context smtContext;
-        SyntaxNodeAnalysisContext analysisContext;
+        Context smt;
+        SyntaxNodeAnalysisContext analysis;
 
-        public SMTConversionVisitor(Context smtContext, SyntaxNodeAnalysisContext analysisContext) {
-            this.smtContext = smtContext;
-            this.analysisContext = analysisContext;
+        public SMTConversionVisitor(Context smt, SyntaxNodeAnalysisContext analysis) {
+            this.smt = smt;
+            this.analysis = analysis;
+        }
+
+        public BoolExpr VisitBoolExpr(SyntaxNode node) {
+            return (BoolExpr)Visit(node);
+        }
+
+        public ArithExpr VisitArithExpr(SyntaxNode node) {
+            return (ArithExpr)Visit(node);
         }
 
         public override Expr DefaultVisit(SyntaxNode node) {
-            return base.DefaultVisit(node);
+            return smt.MkTrue();
+        }
+
+        public override Expr VisitBinaryExpression(BinaryExpressionSyntax node) {
+            switch (node.OperatorToken.Kind()) {
+            case SyntaxKind.AmpersandAmpersandToken:
+                return smt.MkAnd(VisitBoolExpr(node.Left),
+                                 VisitBoolExpr(node.Right));
+            case SyntaxKind.BarBarToken:
+                return smt.MkOr(VisitBoolExpr(node.Left),
+                                VisitBoolExpr(node.Right));
+            case SyntaxKind.EqualsEqualsToken:
+                return smt.MkEq(VisitBoolExpr(node.Left),
+                                VisitBoolExpr(node.Right));
+            case SyntaxKind.ExclamationEqualsToken:
+                // smt.MkDistinct()?
+                return smt.MkNot(smt.MkEq(VisitBoolExpr(node.Left),
+                                          VisitBoolExpr(node.Right)));
+            case SyntaxKind.GreaterThanToken:
+                return smt.MkGt(VisitArithExpr(node.Left),
+                                VisitArithExpr(node.Right));
+            case SyntaxKind.GreaterThanEqualsToken:
+                return smt.MkGe(VisitArithExpr(node.Left),
+                                VisitArithExpr(node.Right));
+            case SyntaxKind.LessThanToken:
+                return smt.MkLt(VisitArithExpr(node.Left),
+                                VisitArithExpr(node.Right));
+            case SyntaxKind.LessThanEqualsToken:
+                return smt.MkLe(VisitArithExpr(node.Left),
+                                VisitArithExpr(node.Right));
+            case SyntaxKind.PlusToken:
+                return smt.MkAdd(VisitArithExpr(node.Left),
+                                 VisitArithExpr(node.Right));
+            case SyntaxKind.MinusToken:
+                return smt.MkSub(VisitArithExpr(node.Left),
+                                 VisitArithExpr(node.Right));
+            case SyntaxKind.AsteriskToken:
+                return smt.MkMul(VisitArithExpr(node.Left),
+                                 VisitArithExpr(node.Right));
+            // division is slow in Z3
+            //case SyntaxKind.SlashToken:
+            }
+
+            return DefaultVisit(node);
+        }
+
+        public override Expr VisitIdentifierName(IdentifierNameSyntax node) {
+            var nodeType = analysis.SemanticModel.GetTypeInfo(node).Type;
+            if (nodeType.Name == "Boolean") {
+                return smt.MkBoolConst(node.Identifier.ValueText);
+            }
+            else if (nodeType.Name == "Int32") {
+                return smt.MkIntConst(node.Identifier.ValueText);
+            }
+
+            return base.VisitIdentifierName(node);
+        }
+
+        // Untested
+        public override Expr VisitLiteralExpression(LiteralExpressionSyntax node) {
+            switch (node.Kind()) {
+            case SyntaxKind.TrueLiteralExpression:
+                return smt.MkTrue();
+            case SyntaxKind.FalseLiteralExpression:
+                return smt.MkFalse();
+            case SyntaxKind.NumericLiteralExpression:
+                return smt.MkInt(node.Token.ValueText);
+            }
+
+            // other literals:
+            // numeric literal
+            // string literal
+            // null keyword
+
+            return DefaultVisit(node);
+        }
+
+        public override Expr VisitPrefixUnaryExpression(PrefixUnaryExpressionSyntax node) {
+
+            if (node.OperatorToken.IsKind(SyntaxKind.ExclamationToken)) {
+                return smt.MkNot(VisitBoolExpr(node));
+            }
+
+            return DefaultVisit(node);
         }
 
         public override Expr Visit(SyntaxNode node) {
             return base.Visit(node);
         }
+
+        #region not overidden yet
 
         public override Expr VisitAccessorDeclaration(AccessorDeclarationSyntax node) {
             return base.VisitAccessorDeclaration(node);
@@ -112,10 +205,6 @@ namespace ExclusiveIfs {
 
         public override Expr VisitBaseList(BaseListSyntax node) {
             return base.VisitBaseList(node);
-        }
-
-        public override Expr VisitBinaryExpression(BinaryExpressionSyntax node) {
-            return base.VisitBinaryExpression(node);
         }
 
         public override Expr VisitBlock(BlockSyntax node) {
@@ -378,15 +467,6 @@ namespace ExclusiveIfs {
             return base.VisitGroupClause(node);
         }
 
-        public override Expr VisitIdentifierName(IdentifierNameSyntax node) {
-            var nodeType = analysisContext.SemanticModel.GetTypeInfo(node).Type;
-            if (nodeType.Name == "Boolean") {
-                return smtContext.MkBoolConst(node.Identifier.ValueText);
-            }
-
-            return base.VisitIdentifierName(node);
-        }
-
         public override Expr VisitIfDirectiveTrivia(IfDirectiveTriviaSyntax node) {
             return base.VisitIfDirectiveTrivia(node);
         }
@@ -473,10 +553,6 @@ namespace ExclusiveIfs {
 
         public override Expr VisitLineDirectiveTrivia(LineDirectiveTriviaSyntax node) {
             return base.VisitLineDirectiveTrivia(node);
-        }
-
-        public override Expr VisitLiteralExpression(LiteralExpressionSyntax node) {
-            return base.VisitLiteralExpression(node);
         }
 
         public override Expr VisitLoadDirectiveTrivia(LoadDirectiveTriviaSyntax node) {
@@ -597,14 +673,6 @@ namespace ExclusiveIfs {
 
         public override Expr VisitPredefinedType(PredefinedTypeSyntax node) {
             return base.VisitPredefinedType(node);
-        }
-
-        public override Expr VisitPrefixUnaryExpression(PrefixUnaryExpressionSyntax node) {
-
-            if (node.OperatorToken.IsKind(SyntaxKind.ExclamationToken)) {
-                return smtContext.MkNot((BoolExpr)Visit(node.Operand));
-            }
-            return null;// base.VisitPrefixUnaryExpression(node);
         }
 
         public override Expr VisitPropertyDeclaration(PropertyDeclarationSyntax node) {
@@ -854,5 +922,7 @@ namespace ExclusiveIfs {
         public override Expr VisitYieldStatement(YieldStatementSyntax node) {
             return base.VisitYieldStatement(node);
         }
+
+        #endregion
     }
 }
