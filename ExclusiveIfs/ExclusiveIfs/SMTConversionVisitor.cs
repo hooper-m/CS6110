@@ -31,39 +31,39 @@ namespace ExclusiveIfs {
         }
 
         public override Expr VisitBinaryExpression(BinaryExpressionSyntax node) {
-            switch (node.OperatorToken.Kind()) {
-            case SyntaxKind.AmpersandAmpersandToken:
+            switch (node.Kind()) {
+            case SyntaxKind.LogicalAndExpression:
                 return smt.MkAnd(VisitBoolExpr(node.Left),
                                  VisitBoolExpr(node.Right));
-            case SyntaxKind.BarBarToken:
+            case SyntaxKind.LogicalOrExpression:
                 return smt.MkOr(VisitBoolExpr(node.Left),
                                 VisitBoolExpr(node.Right));
-            case SyntaxKind.EqualsEqualsToken:
-                return smt.MkEq(VisitBoolExpr(node.Left),
-                                VisitBoolExpr(node.Right));
-            case SyntaxKind.ExclamationEqualsToken:
+            case SyntaxKind.EqualsExpression:
+                return smt.MkEq(Visit(node.Left),
+                                Visit(node.Right));
+            case SyntaxKind.NotEqualsExpression:
                 // smt.MkDistinct()?
                 return smt.MkNot(smt.MkEq(VisitBoolExpr(node.Left),
                                           VisitBoolExpr(node.Right)));
-            case SyntaxKind.GreaterThanToken:
+            case SyntaxKind.GreaterThanExpression:
                 return smt.MkGt(VisitArithExpr(node.Left),
                                 VisitArithExpr(node.Right));
-            case SyntaxKind.GreaterThanEqualsToken:
+            case SyntaxKind.GreaterThanOrEqualExpression:
                 return smt.MkGe(VisitArithExpr(node.Left),
                                 VisitArithExpr(node.Right));
-            case SyntaxKind.LessThanToken:
+            case SyntaxKind.LessThanExpression:
                 return smt.MkLt(VisitArithExpr(node.Left),
                                 VisitArithExpr(node.Right));
-            case SyntaxKind.LessThanEqualsToken:
+            case SyntaxKind.LessThanOrEqualExpression:
                 return smt.MkLe(VisitArithExpr(node.Left),
                                 VisitArithExpr(node.Right));
-            case SyntaxKind.PlusToken:
+            case SyntaxKind.AddExpression:
                 return smt.MkAdd(VisitArithExpr(node.Left),
                                  VisitArithExpr(node.Right));
-            case SyntaxKind.MinusToken:
+            case SyntaxKind.SubtractExpression:
                 return smt.MkSub(VisitArithExpr(node.Left),
                                  VisitArithExpr(node.Right));
-            case SyntaxKind.AsteriskToken:
+            case SyntaxKind.MultiplyExpression:
                 return smt.MkMul(VisitArithExpr(node.Left),
                                  VisitArithExpr(node.Right));
             // division is slow in Z3
@@ -82,7 +82,7 @@ namespace ExclusiveIfs {
                 return smt.MkIntConst(node.Identifier.ValueText);
             }
 
-            return base.VisitIdentifierName(node);
+            return DefaultVisit(node);
         }
 
         // Untested
@@ -97,7 +97,6 @@ namespace ExclusiveIfs {
             }
 
             // other literals:
-            // numeric literal
             // string literal
             // null keyword
 
@@ -106,8 +105,9 @@ namespace ExclusiveIfs {
 
         public override Expr VisitPrefixUnaryExpression(PrefixUnaryExpressionSyntax node) {
 
-            if (node.OperatorToken.IsKind(SyntaxKind.ExclamationToken)) {
-                return smt.MkNot(VisitBoolExpr(node));
+            switch (node.Kind()) {
+            case SyntaxKind.LogicalNotExpression:
+                return smt.MkNot(VisitBoolExpr(node.Operand));
             }
 
             return DefaultVisit(node);

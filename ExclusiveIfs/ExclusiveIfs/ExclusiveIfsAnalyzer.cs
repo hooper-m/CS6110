@@ -48,10 +48,14 @@ namespace ExclusiveIfs {
                 var solver = smt.MkSolver();
                 SMTConversionVisitor visitor = new SMTConversionVisitor(smt, analysis);
 
-                BoolExpr ifCondition1 = (BoolExpr)visitor.Visit(ifStatement.Condition);
-                BoolExpr ifCondition2 = (BoolExpr)visitor.Visit(nextIfStatement.Condition);
+                //BoolExpr ifCondition1 = visitor.VisitBoolExpr(ifStatement.Condition);
+                //BoolExpr ifCondition2 = visitor.VisitBoolExpr(nextIfStatement.Condition);
 
-                solver.Assert(smt.MkAnd(ifCondition1, ifCondition2));
+                //solver.Assert(smt.MkAnd(ifCondition1, ifCondition2));
+
+                solver.Assert(visitor.VisitBoolExpr(ifStatement.Condition));
+                solver.Assert(visitor.VisitBoolExpr(nextIfStatement.Condition));
+                //solver.Assert(smt.MkOr(smt.MkNot(ifCondition1), smt.MkNot(ifCondition2)));
                 if (solver.Check() == Status.UNSATISFIABLE) {
                     analysis.ReportDiagnostic(Diagnostic.Create(Rule, nextIfStatement.Condition.GetLocation()));
                 }
