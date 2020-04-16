@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
+using System.IO;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.Z3;
+//using Microsoft.Z3;
 
 namespace ExclusiveIfs {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -43,88 +45,41 @@ namespace ExclusiveIfs {
 
             IfStatementSyntax nextIfStatement = (IfStatementSyntax) outerStatements[nextStatementIndex];
 
-            using (Context smt = new Context()) {
-
-                var solver = smt.MkSolver();
-                SMTConversionVisitor visitor = new SMTConversionVisitor(smt, analysis);
-
-                //BoolExpr ifCondition1 = visitor.VisitBoolExpr(ifStatement.Condition);
-                //BoolExpr ifCondition2 = visitor.VisitBoolExpr(nextIfStatement.Condition);
-
-                //solver.Assert(smt.MkAnd(ifCondition1, ifCondition2));
-
-                solver.Assert(visitor.VisitBoolExpr(ifStatement.Condition));
-                solver.Assert(visitor.VisitBoolExpr(nextIfStatement.Condition));
-                //solver.Assert(smt.MkOr(smt.MkNot(ifCondition1), smt.MkNot(ifCondition2)));
-                if (solver.Check() == Status.UNSATISFIABLE) {
-                    analysis.ReportDiagnostic(Diagnostic.Create(Rule, nextIfStatement.Condition.GetLocation()));
-                }
-                //SMTConversionWalker walker = new SMTConversionWalker(SMTContext, context, ifStatement.Condition);
-
-                //BoolExpr ifCondition1 = SyntaxToZ3(context, SMTContext, ifStatement.Condition);
-                //BoolExpr ifCondition2 = SyntaxToZ3(context, SMTContext, nextIfStatement.Condition);
-
-                //var solver = SMTContext.MkSolver();
-                //solver.Assert(SMTContext.MkAnd(ifCondition1, ifCondition2));
-                //if (solver.Check() == Status.UNSATISFIABLE) {
-                //    context.ReportDiagnostic(Diagnostic.Create(Rule, nextIfStatement.GetLocation()));
-                //}
+            Z3InputVisitor visitor = new Z3InputVisitor(analysis);
+            string z3input = $"(assert (and {visitor.Visit(ifStatement.Condition)} {visitor.Visit(nextIfStatement.Condition)})) (check-sat)";
+            z3input = visitor.GetDeclarations() + z3input;
+            string z3output = "";
+            using (StreamWriter file = File.CreateText("z3in.txt")) {
+                file.WriteLine(z3input);
             }
-        }
-
-        private static BoolExpr SyntaxToZ3(SyntaxNodeAnalysisContext analysisContext, Context SMTContext, SyntaxNode condition) {
-
-            if (condition is LiteralExpressionSyntax literal) {
-                switch (literal.Kind()) {
-                case SyntaxKind.TrueLiteralExpression:
-                    return SMTContext.MkTrue();
-                case SyntaxKind.FalseLiteralExpression:
-                    return SMTContext.MkFalse();
-                }
+            using (Process z3 = new Process()) {
+                z3.StartInfo.FileName = @"C:\Program Files (x86)\z3-4.8.7-x64-win\z3-4.8.7-x64-win\bin\z3.exe";
+                z3.StartInfo.Arguments = @"C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs.Vsix\bin\Debug\z3in.txt";
+                z3.StartInfo.UseShellExecute = false;
+                z3.StartInfo.CreateNoWindow = true;
+                z3.StartInfo.RedirectStandardOutput = true;
+                z3.Start();
+                z3output = z3.StandardOutput.ReadToEnd();
+                z3.WaitForExit();
             }
-            // bool b = true;
-            // if (b) ...
-            else if (condition is IdentifierNameSyntax id) {
-                var idType = analysisContext.SemanticModel.GetTypeInfo(condition).Type;
-                if (idType.Name == "Boolean") {
-                    return SMTContext.MkBoolConst(id.Identifier.ValueText);
-                }
-                //else if (idType.Name == "Inte")
+            if (z3output.Contains("unsat")) {
+                analysis.ReportDiagnostic(Diagnostic.Create(Rule, ifStatement.GetLocation()));
             }
+            //using (Context smt = new Context()) {
 
-            else if (condition is PrefixUnaryExpressionSyntax pref) {
-                // !b
-                if (pref.OperatorToken.Kind() == SyntaxKind.ExclamationToken) {
-                    return SMTContext.MkNot(SyntaxToZ3(analysisContext, SMTContext, pref.Operand));
-                }
-            }
+            //    var solver = smt.MkSolver();
+            //    SMTConversionVisitor visitor = new SMTConversionVisitor(smt, analysis);
 
-            else if (condition is BinaryExpressionSyntax bin) {
-                switch (bin.OperatorToken.Kind()) {
-                case SyntaxKind.AmpersandAmpersandToken:
-                    return SMTContext.MkAnd(SyntaxToZ3(analysisContext, SMTContext, bin.Left),
-                                            SyntaxToZ3(analysisContext, SMTContext, bin.Right));
-                case SyntaxKind.BarBarToken:
-                    return SMTContext.MkOr(SyntaxToZ3(analysisContext, SMTContext, bin.Left),
-                                           SyntaxToZ3(analysisContext, SMTContext, bin.Right));
-                case SyntaxKind.EqualsEqualsToken:
-                    return SMTContext.MkEq(SyntaxToZ3(analysisContext, SMTContext, bin.Left),
-                                           SyntaxToZ3(analysisContext, SMTContext, bin.Right));
-                case SyntaxKind.ExclamationEqualsToken:
-                    // SMTContext.MkDistinct()?
-                    return SMTContext.MkNot(SMTContext.MkEq(SyntaxToZ3(analysisContext, SMTContext, bin.Left),
-                                                            SyntaxToZ3(analysisContext, SMTContext, bin.Right)));
-                // doesn't work, since MkGt needs ArithExp
-
-                // (5 + 5) < 6
-                // 1 + 2 + 3
-                //case SyntaxKind.GreaterThanToken:
-                //    return SMTContext.MkGt(SyntaxToZ3(analysisContext, SMTContext, bin.Left),
-                //                           SyntaxToZ3(analysisContext, SMTContext, bin.Right));
-                }
-            }
-
-            return SMTContext.MkBool(true);
+            //    solver.Assert(visitor.VisitBoolExpr(ifStatement.Condition));
+            //    solver.Assert(visitor.VisitBoolExpr(nextIfStatement.Condition));
+            //    if (solver.Check() == Status.UNSATISFIABLE) {
+            //        analysis.ReportDiagnostic(Diagnostic.Create(Rule, nextIfStatement.Condition.GetLocation()));
+            //    }
+            //}
         }
     }
 }
+
+// {(declare-fun x () Int)
+//  (assert (> x 0))
+//  (assert (= x 0))}

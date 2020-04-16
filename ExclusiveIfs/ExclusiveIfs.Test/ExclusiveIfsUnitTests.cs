@@ -133,6 +133,19 @@ namespace Test {
         }
     }
 }";
+        private const string unsatrange = @"
+namespace Test {
+    class Program {
+        public static int test (int x) {
+            int y = 0;
+            if (0 < x && x <= 10)
+                y = 1;
+            if (20 < x && x < 50)
+                y = 2;
+            return y;
+        }
+    }
+}";
         //No diagnostics expected to show up
         [DataTestMethod]
         [DataRow(""),
@@ -148,9 +161,10 @@ namespace Test {
 
         //Diagnostic triggered and checked for
         [DataTestMethod]
-        [DataRow(exclusiveIfsInBlock, 6, 17),
-         DataRow(exclusiveIfsInSwitchCase, 9, 21),
-         DataRow(trivialUnsatIfs, 7, 17),
+        [DataRow(exclusiveIfsInBlock, 5, 13),
+         DataRow(exclusiveIfsInSwitchCase, 7, 17),
+         DataRow(trivialUnsatIfs, 6, 13),
+         DataRow(unsatrange, 6, 13),
          ]
         public void DiagnosticRaised(string testCode, int line, int column)
         {
@@ -158,7 +172,7 @@ namespace Test {
         }
 
         [DataTestMethod]
-        [DataRow(threeUnsatIfs, 7, 17, 9, 17),]
+        [DataRow(threeUnsatIfs, 6, 13, 7, 13),]
         public void TwoDiagnosticsRaised(string testCode, int line1, int col1, int line2, int col2)
         {
             DiagnosticResult[] expected =
