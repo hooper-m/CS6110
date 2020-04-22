@@ -7,11 +7,15 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace ExclusiveIfs {
-    class Z3InputVisitor : CSharpSyntaxVisitor<String> {
+    public class Z3InputVisitor : CSharpSyntaxVisitor<String> {
 
-        Dictionary<string, string> declarations;
-        SyntaxNodeAnalysisContext analysisContext;
+        private SyntaxNodeAnalysisContext analysisContext;
+        private Dictionary<string, string> declarations;      
 
+        public Z3InputVisitor(SyntaxNodeAnalysisContext analysis) {
+            analysisContext = analysis;
+            declarations = new Dictionary<string, string>();
+        }
         public string GetDeclarations() {
             string declarations = "";
             foreach (string decl in this.declarations.Values) {
@@ -19,11 +23,6 @@ namespace ExclusiveIfs {
             }
 
             return declarations;
-        }
-
-        public Z3InputVisitor(SyntaxNodeAnalysisContext analysis) {
-            analysisContext = analysis;
-            declarations = new Dictionary<string, string>();
         }
 
         public override string DefaultVisit(SyntaxNode node) {
@@ -54,8 +53,7 @@ namespace ExclusiveIfs {
             case SyntaxKind.AddExpression:
                 return $"(+ {Visit(node.Left)} {Visit(node.Right)})";
             case SyntaxKind.NotEqualsExpression:
-                // smt.MkDistinct()?
-                return $"(not (= {Visit(node.Left)} {Visit(node.Right)}))";
+                return $"(distinct {Visit(node.Left)} {Visit(node.Right)})";
             case SyntaxKind.GreaterThanExpression:
                 return $"(> {Visit(node.Left)} {Visit(node.Right)})";
             case SyntaxKind.GreaterThanOrEqualExpression:
@@ -68,8 +66,6 @@ namespace ExclusiveIfs {
                 return $"(* {Visit(node.Left)} {Visit(node.Right)})";
             case SyntaxKind.LogicalOrExpression:
                 return $"(or {Visit(node.Left)} {Visit(node.Right)})";
-                // division is slow in Z3
-                //case SyntaxKind.SlashToken:
             }
 
             return DefaultVisit(node);
@@ -86,10 +82,11 @@ namespace ExclusiveIfs {
         }
 
         public override string VisitIdentifierName(IdentifierNameSyntax node) {
+
             string identifierName = node.Identifier.ValueText;
 
             if (!declarations.ContainsKey(identifierName)) {
-                var nodeType = analysisContext.SemanticModel.GetTypeInfo(node).Type;
+                var nodeType = analysisContext.SemanticModel.GetTypeInfo(node).ConvertedType;
                 if (nodeType != null && nodeType.Name == "Boolean") {
                     declarations[identifierName] = $"(declare-fun {identifierName} () Bool)";
                 }

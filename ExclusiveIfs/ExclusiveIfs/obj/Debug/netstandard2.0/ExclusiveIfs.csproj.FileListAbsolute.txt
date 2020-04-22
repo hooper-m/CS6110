@@ -1,0 +1,13 @@
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\bin\Debug\netstandard2.0\tools\install.ps1
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\bin\Debug\netstandard2.0\tools\uninstall.ps1
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\bin\Debug\netstandard2.0\ExclusiveIfs.deps.json
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\bin\Debug\netstandard2.0\ExclusiveIfs.dll
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\bin\Debug\netstandard2.0\ExclusiveIfs.pdb
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\Debug\netstandard2.0\ExclusiveIfs.csprojAssemblyReference.cache
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\Debug\netstandard2.0\ExclusiveIfs.Resources.resources
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\Debug\netstandard2.0\ExclusiveIfs.csproj.GenerateResource.cache
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\Debug\netstandard2.0\ExclusiveIfs.csproj.CoreCompileInputs.cache
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\Debug\netstandard2.0\ExclusiveIfs.AssemblyInfoInputs.cache
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\Debug\netstandard2.0\ExclusiveIfs.AssemblyInfo.cs
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\Debug\netstandard2.0\ExclusiveIfs.dll
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\Debug\netstandard2.0\ExclusiveIfs.pdb

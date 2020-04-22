@@ -15,12 +15,12 @@
     <tags>ExclusiveIfs, analyzers</tags>
     <repository url="http://REPOSITORY_URL_HERE_OR_DELETE_THIS_LINE" />
     <dependencies>
-      <group targetFramework=".NETStandard1.3" />
+      <group targetFramework=".NETStandard2.0" />
     </dependencies>
   </metadata>
   <files>
-    <file src="C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\tools\install.ps1" target="tools\install.ps1" />
-    <file src="C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\tools\uninstall.ps1" target="tools\uninstall.ps1" />
-    <file src="C:\Users\Matt\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\bin\Debug\netstandard1.3\ExclusiveIfs.dll" target="analyzers\dotnet\cs\ExclusiveIfs.dll" />
+    <file src="C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\tools\install.ps1" target="tools\install.ps1" />
+    <file src="C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\tools\uninstall.ps1" target="tools\uninstall.ps1" />
+    <file src="C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\bin\Debug\netstandard2.0\ExclusiveIfs.dll" target="analyzers\dotnet\cs\ExclusiveIfs.dll" />
   </files>
 </package>

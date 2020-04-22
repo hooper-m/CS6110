@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ExclusiveIfs": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

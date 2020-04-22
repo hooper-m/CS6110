@@ -2585,7 +2585,7 @@
       },
       "ExclusiveIfs/1.0.0": {
         "type": "project",
-        "framework": ".NETStandard,Version=v1.3",
+        "framework": ".NETStandard,Version=v2.0",
         "compile": {
           "bin/placeholder/ExclusiveIfs.dll": {}
         },
@@ -8164,23 +8164,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Matt\\.nuget\\packages\\": {},
+    "C:\\Users\\Udnamtam\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Matt\\Source\\Repos\\CS6110\\ExclusiveIfs\\ExclusiveIfs.Test\\ExclusiveIfs.Test.csproj",
+      "projectUniqueName": "C:\\Users\\Udnamtam\\Source\\Repos\\CS6110\\ExclusiveIfs\\ExclusiveIfs.Test\\ExclusiveIfs.Test.csproj",
       "projectName": "ExclusiveIfs.Test",
-      "projectPath": "C:\\Users\\Matt\\Source\\Repos\\CS6110\\ExclusiveIfs\\ExclusiveIfs.Test\\ExclusiveIfs.Test.csproj",
-      "packagesPath": "C:\\Users\\Matt\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Matt\\Source\\Repos\\CS6110\\ExclusiveIfs\\ExclusiveIfs.Test\\obj\\",
+      "projectPath": "C:\\Users\\Udnamtam\\Source\\Repos\\CS6110\\ExclusiveIfs\\ExclusiveIfs.Test\\ExclusiveIfs.Test.csproj",
+      "packagesPath": "C:\\Users\\Udnamtam\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Udnamtam\\Source\\Repos\\CS6110\\ExclusiveIfs\\ExclusiveIfs.Test\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Matt\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Udnamtam\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -8194,8 +8194,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\Matt\\Source\\Repos\\CS6110\\ExclusiveIfs\\ExclusiveIfs\\ExclusiveIfs.csproj": {
-              "projectPath": "C:\\Users\\Matt\\Source\\Repos\\CS6110\\ExclusiveIfs\\ExclusiveIfs\\ExclusiveIfs.csproj"
+            "C:\\Users\\Udnamtam\\Source\\Repos\\CS6110\\ExclusiveIfs\\ExclusiveIfs\\ExclusiveIfs.csproj": {
+              "projectPath": "C:\\Users\\Udnamtam\\Source\\Repos\\CS6110\\ExclusiveIfs\\ExclusiveIfs\\ExclusiveIfs.csproj"
             }
           }
         }

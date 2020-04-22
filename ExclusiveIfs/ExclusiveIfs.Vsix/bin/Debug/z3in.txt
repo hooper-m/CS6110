@@ -1,0 +1,1 @@
+(declare-fun p () Bool)(declare-fun r () Bool)(declare-fun q () Bool)(declare-fun s () Bool)(assert (and (or (and p r) (or q s)) (and (and (or (not p) (not r)) (not q)) (not s)))) (check-sat)

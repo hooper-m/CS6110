@@ -1,0 +1,15 @@
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\bin\x64\Release\netstandard1.3\tools\install.ps1
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\bin\x64\Release\netstandard1.3\tools\uninstall.ps1
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\bin\x64\Release\netstandard1.3\ExclusiveIfs.deps.json
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\bin\x64\Release\netstandard1.3\ExclusiveIfs.dll
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\bin\x64\Release\netstandard1.3\ExclusiveIfs.pdb
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\bin\x64\Release\netstandard1.3\Microsoft.Z3.dll
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\x64\Release\netstandard1.3\ExclusiveIfs.csprojAssemblyReference.cache
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\x64\Release\netstandard1.3\ExclusiveIfs.Resources.resources
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\x64\Release\netstandard1.3\ExclusiveIfs.csproj.GenerateResource.cache
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\x64\Release\netstandard1.3\ExclusiveIfs.csproj.CoreCompileInputs.cache
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\x64\Release\netstandard1.3\ExclusiveIfs.AssemblyInfoInputs.cache
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\x64\Release\netstandard1.3\ExclusiveIfs.AssemblyInfo.cs
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\x64\Release\netstandard1.3\ExclusiveIfs.csproj.CopyComplete
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\x64\Release\netstandard1.3\ExclusiveIfs.dll
+C:\Users\Udnamtam\Source\Repos\CS6110\ExclusiveIfs\ExclusiveIfs\obj\x64\Release\netstandard1.3\ExclusiveIfs.pdb

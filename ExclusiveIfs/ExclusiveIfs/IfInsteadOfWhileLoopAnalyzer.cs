@@ -31,7 +31,7 @@ namespace IfInsteadOfWhileLoop {
         }
 
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context) {
-            var whileClause = (WhileStatementSyntax)context.Node;
+            var whileClause = (WhileStatementSyntax) context.Node;
 
             if (whileClause.Statement is ReturnStatementSyntax returnStatement) {
                 context.ReportDiagnostic(Diagnostic.Create(Rule, context.Node.GetLocation()));

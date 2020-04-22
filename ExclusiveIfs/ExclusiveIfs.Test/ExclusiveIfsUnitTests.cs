@@ -133,7 +133,7 @@ namespace Test {
         }
     }
 }";
-        private const string unsatrange = @"
+        private const string unsatRange = @"
 namespace Test {
     class Program {
         public static int test (int x) {
@@ -141,6 +141,34 @@ namespace Test {
             if (0 < x && x <= 10)
                 y = 1;
             if (20 < x && x < 50)
+                y = 2;
+            return y;
+        }
+    }
+}";
+        private const string unsatParen = @"
+namepsace Test {
+    class Program {
+        public static int test (bool p, bool q) {
+            int x = 0;
+            if (p || q)
+                x = 1;
+            if (!(p && q))
+                x = 2;
+            return x;
+        }
+    }
+}";
+        // not yet passing this test
+        private const string unsatLocal = @"
+namespace Test {
+    class Program {
+        public static int test (bool p, bool q) {
+            int y = 0;
+            bool r = p || q;
+            if (r)
+                y = 1;
+            if (!(p && q))
                 y = 2;
             return y;
         }
@@ -164,7 +192,9 @@ namespace Test {
         [DataRow(exclusiveIfsInBlock, 5, 13),
          DataRow(exclusiveIfsInSwitchCase, 7, 17),
          DataRow(trivialUnsatIfs, 6, 13),
-         DataRow(unsatrange, 6, 13),
+         DataRow(unsatRange, 6, 13),
+         DataRow(unsatParen, 6, 13),
+         DataRow(unsatLocal, 7, 13),
          ]
         public void DiagnosticRaised(string testCode, int line, int column)
         {
